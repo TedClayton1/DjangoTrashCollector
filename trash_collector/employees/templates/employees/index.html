@@ -4,8 +4,10 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    Hello Employee {{ user.username }}!
-  {% else %}
+    Hello Employee {{ logged_in_employee.name }}!
+    Name : {{logged_in_employee.employee_name}}
+    Zipcode : {{logged_in_employee_zipcode}}
+    {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
     <a href="{% url 'accounts:register' %}">Sign Up</a>
