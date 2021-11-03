@@ -5,7 +5,7 @@
 {% block content %}
   {% if user.is_authenticated %}
     Hello Employee {{ logged_in_employee.name }}!
-    Name : {{logged_in_employee.employee_name}}
+    Name : {{logged_in_employee.name}}
     Zipcode : {{logged_in_employee_zipcode}}
     {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
