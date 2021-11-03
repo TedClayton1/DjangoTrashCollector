@@ -5,7 +5,8 @@ from django.apps import apps
 from django.urls.base import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from .models import EmployeeInfo
+from .models import Employee
+from .models import Customer
 
 # Create your views here.
 # TODO: Create a function for each path created in employees/urls.py. Each will need a template as well.
@@ -16,17 +17,18 @@ def index(request):
     Customer = apps.get_model('customers.Customer')
     logged_in_user = request.user
     try:
-        logged_in_employee = EmployeeInfo.objects.get(user=logged_in_user)
+        logged_in_employee = Employee.objects.get(user=logged_in_user)
 
         today = date.today()
-        
+
         customers = Customer.objects.filter(zip_code=logged_in_employee.zip_code)
         today_customers = customers.filter(weekly_pickup=today)
         active_pickups = today_customers.exclude(suspend_start__lt=today, suspend_end__gt=today)
 
         context = {
             'logged_in_employee': logged_in_employee,
-            'today': today
+            'today': today,
+            'active_pickups': active_pickups
         }
         return render(request, 'employees/index.html', context)
     except ObjectDoesNotExist:
@@ -37,21 +39,24 @@ def create(request):
     logged_in_user = request.user
     if request.method == "POST":
         name_from_form = request.POST.get('name')
+        address_from_form = request.POST.get('address')
         zip_from_form = request.POST.get('zip_code')
-        new_employee = EmployeeInfo(name=name_from_form, user=name_from_form, zip_code=zip_from_form)
+        new_employee = Employee(name=name_from_form, user=logged_in_user, address=address_from_form, zip_code=zip_from_form)
         new_employee.save()
         return HttpResponseRedirect(reverse('employees:index'))
     else:
         return render(request, 'employees/create.html')
 
-
+@login_required
 def edit_employee(request):
     logged_in_user = request.user
-    logged_in_employee = EmployeeInfo.objects.get(user=logged_in_user)
+    logged_in_employee = Employee.objects.get(user=logged_in_user)
     if request.method == "POST":
         name_from_form = request.POST.get('name')
+        address_from_form = request.POST.get('address')
         zip_from_form = request.POST.get('zip_code')
         logged_in_employee.name = name_from_form
+        logged_in_employee.address = address_from_form
         logged_in_employee.zip_code = zip_from_form
         logged_in_employee.save()
         return HttpResponseRedirect(reverse('employees:index'))
@@ -59,4 +64,4 @@ def edit_employee(request):
         context = {
             'logged_in_employee': logged_in_employee
         }
-        return render(request, 'employees/edit.html', context)
+        return render(request, 'employees/edit_employee.html', context)

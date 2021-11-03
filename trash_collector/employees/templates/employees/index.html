@@ -4,9 +4,15 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    Hello Employee {{ logged_in_employee.name }}!
-    Name : {{logged_in_employee.name}}
-    Zipcode : {{logged_in_employee_zipcode}}
+    Hello Employee {{ user.username }}!
+    <br>
+    Name : {{ logged_in_employee.name }}
+    <br>
+    Address : {{ logged_in_employee.address }}
+    <br>
+    Zipcode : {{ logged_in_employee.zip_code }}
+    <br>
+    <a href="{% url 'employees:edit_employee' %}">Edit Profile</a>
     {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>

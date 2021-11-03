@@ -86,7 +86,4 @@ def edit_profile(request):
         logged_in_customer.save()
         return HttpResponseRedirect(reverse('customers:index'))
     else:
-        context = {
-            'logged_in_customer': logged_in_customer
-        }
-        return render(request, 'customers/edit_profile.html', context)
+        return render(request, 'customers/edit_profile.html')
