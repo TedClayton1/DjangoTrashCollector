@@ -1,21 +1,66 @@
-{% extends 'base.html' %}
+{% extends 'employees/employee_base.html' %}
 
-{% block title %}{% block header %} Employee Home {% endblock %}{% endblock %}
+{% block title %} {% block header %} Employee Portal {% endblock %} {% endblock %}
 
-{% block content %}
+{% comment %} {% block content %}
   {% if user.is_authenticated %}
-    Hello Employee {{ user.username }}!
+    Hello  {{ user.username }}!
     <br>
-    Name : {{ logged_in_employee.name }}
+    Name: {{logged_in_employee.name}}
     <br>
-    Address : {{ logged_in_employee.address }}
     <br>
-    Zipcode : {{ logged_in_employee.zip_code }}
+    Address:  {{logged_in_employee.address}}
     <br>
-    <a href="{% url 'employees:edit_employee' %}">Edit Profile</a>
+    <br>
+    Zipcode:  {{logged_in_employee.zip_code}}
+    <br>
+    <br>
+    Todays Date:  {{todays_date}}
+    <br>
+    <br>
+    Todays active pickups:
+    {% for customer in active_pickups %}
+    <br>
+    <br>
+    <li>
+      {{customer}} {{customer.address}} {{customer.zip_code}} -
+      <a href="{% url 'employees:confirm' customer.id %}" >Confirm Pickup</a>
+    </li>
+    {% endfor %}
+    <br>
+    <br>
     {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
     <a href="{% url 'accounts:register' %}">Sign Up</a>
   {% endif %}
-{% endblock %}
+  {% endblock %} {% endcomment %}
+  {% block content %}
+  {% if user.is_authenticated %}
+    Hello {{logged_in_employee.name}}
+    <br>
+    Address: {{logged_in_employee.address}}
+    <br>
+    Zipcode:  {{logged_in_employee.zip_code}}
+    <br>
+    <br>
+    <br>
+    Todays Date: {{todays_date}}
+    <br>
+    <br>
+    <br>
+    Todays Active Pickups:
+    {% for customer in active_pickups %}
+    <br>
+    <li>
+      {{customer}} {{customer.address}} {{customer.zip_code}} -
+      <a href="{% url 'employees:confirm' customer.id %}">Confirm Pickup</a>
+    </li>
+    {% endfor %}
+    <br>
+    {% else %}
+    <p>You are at the employee index, bu you are not logged in.</p>
+    <a href="{% url 'login' %}">Log In.</a>
+    <a href="{% url 'accounts:register' %}">Sign Up.</a>
+    {% endif %}
+    {% endblock %}
