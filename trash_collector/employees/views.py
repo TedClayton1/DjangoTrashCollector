@@ -5,8 +5,6 @@ from django.apps import apps
 from django.urls.base import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-
-from trash_collector.customers.views import one_time_pickup
 from .models import Employee
 from datetime import datetime
 
@@ -25,17 +23,16 @@ def index(request):
         weekday_name = todays_date.strftime('%A')
 
         customers = Customer.objects.filter(zip_code=logged_in_employee.zip_code)
-        today_customers = customers.filter(weekly_pickup=weekday_name) | customers.filter(one_time_pickup=weekday_name)
+        today_customers = customers.filter(weekly_pickup=weekday_name) | customers.filter(one_time_pickup=todays_date)
         active_pickups = today_customers.exclude(suspend_start__lt=todays_date, suspend_end__gt=todays_date)
         active_pickups = active_pickups.exclude(date_of_last_pickup = todays_date)
-        extra_pickup = customers.filter(one_time_pickup=weekday_name)
 
 
         context = {
             'logged_in_employee': logged_in_employee,
             'todays_date': todays_date,
             'active_pickups': active_pickups,
-            'extra_pickup': extra_pickup
+            'weekday_name': weekday_name
         }
         return render(request, 'employees/index.html', context)
     except ObjectDoesNotExist:
